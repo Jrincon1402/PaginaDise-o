@@ -26,7 +26,8 @@
 </head>
 <body>
   <div class="container">
-    <h1>Barra de Progreso</h1>
+    <h1 >Distancia Medida: </h1>
+    <span id="Valor"></span>
     <div class="progress">
       <div id="progressBar"></div>
     </div>
@@ -67,6 +68,7 @@
                 }
                 var progressBar = document.getElementById("progressBar");
                 progressBar.style.width = (aux / 2000) * 100 + "%";
+                document.getElementById("Valor").innerHTML = aux;
             } else {
             }
         }).catch((error) => {
