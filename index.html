@@ -1,122 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba para Diseño</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <META http-equiv=refresh content=1000>
+  <title>Barra de Progreso</title>
+  <style>
+    .container {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .progress {
+      width: 50%;
+      margin: 20px auto;
+      border: 1px solid #000;
+    }
+
+    #progressBar {
+      width: 0%;
+      height: 30px;
+      background-color: #4CAF50;
+    }
+  </style>
 </head>
 <body>
-    <label>Primer Nombre</label>
-    <input type="text"  id="Primer">
-    <br><br>
-    <label>Segundo Nombre</label>
-    <input type="text"  id="Segundo">
-    <br><br>
-
-    <label>Departamento</label>
-    <select id="Departamento">
-        <option value="Desarrollo">Desarrollo</option>
-        <option value="Testeo">Testeo</option>
-    </select>
-
-    <br><br>
-
-    <label>ID</label>
-    <input type="number" id="ID">
-
-    <br><br>
-
-    <button id="Adicionar">Adicionar</button>
-    <button id="Leer">Leer</button>
-    <button id="Modificar">Modificar</button>
-    <button id="Borrar">Borrar</button>
-    <br><br>
-
-    <label >Valor del Sensor: </label>
-    <label id="Sensor">No hay</label>
-
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+  <div class="container">
+    <h1>Barra de Progreso</h1>
+    <div class="progress">
+      <div id="progressBar"></div>
+    </div>
+  </div>
+  <script type="module">
+  
+    // Initialize Firebase
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
       
         // Your web app's Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyBLW1xPvfY1M7171wWfT27Qx5xLOMR92e4",
-          authDomain: "diseno-96232.firebaseapp.com",
-          databaseURL: "https://diseno-96232-default-rtdb.firebaseio.com",
-          projectId: "diseno-96232",
-          storageBucket: "diseno-96232.appspot.com",
-          messagingSenderId: "676208575892",
-          appId: "1:676208575892:web:acffb2f8b413f7b21b7b81"
-        };
-      
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
+    const firebaseConfig = {
+        apiKey: "AIzaSyBLW1xPvfY1M7171wWfT27Qx5xLOMR92e4",
+        authDomain: "diseno-96232.firebaseapp.com",
+        databaseURL: "https://diseno-96232-default-rtdb.firebaseio.com",
+        projectId: "diseno-96232",
+        storageBucket: "diseno-96232.appspot.com",
+        messagingSenderId: "676208575892",
+        appId: "1:676208575892:web:acffb2f8b413f7b21b7b81"
+    };
+    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
 
-        import {getDatabase, ref, child, get, set, update, remove} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+    import {getDatabase, ref, child, get, set, update, remove} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
 
-        const db = getDatabase();
+    const dbRef = ref(getDatabase());
+    
 
-        let Primer = document.getElementById("Primer");
-        let Segundo = document.getElementById("Seguno");
-        let Departamento = document.getElementById("Departamento");
-        let ID = document.getElementById("ID");
-
-        let Adicionar = document.getElementById("Adicionar");
-        let Leer = document.getElementById("Leer");
-        let Borrar = document.getElementById("Borrar");
-        let Modificar = document.getElementById("Modificar");
-
-        function AdicionarF() {   
-            set(ref(db, 'Empleado/' + document.getElementById("ID").value),{
-                NombreDelEmpleado: {PrimerNombre: document.getElementById("Primer").value, SegundoNombre: document.getElementById("Segundo").value},
-                Departamento: document.getElementById("Departamento").value,
-                ID: Number(document.getElementById("ID").value)
-            });
-            alert("Empleado Agregado");
-        }
-
-        function LeerF() {
-            const dbRef = ref(db);
-            get(child(dbRef,'Empleado/' + ID.value)).then((snapshot)=>{
-                if(snapshot.exists()) {
-                    document.getElementById("Primer").value = snapshot.val().NombreDelEmpleado.PrimerNombre;
-                    document.getElementById("Segundo").value = snapshot.val().NombreDelEmpleado.SegundoNombre;
-                    document.getElementById("Departamento").value = snapshot.val().Departamento;
+    setInterval(() => {
+        get(child(dbRef, `Sensorica/Distancia/`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                var aux = snapshot.val();
+                if (aux >= 2000){
+                    aux = 2000;
                 }
-                else {
-                    alert("El empleado no existe");
-                }
-            })
-        }
-
-        function BorrarF() {
-            remove(ref(db,'Empleado/' + ID.value)).then(()=>{
-                alert("Empleado Borrado");
-            })
-        }
-
-        function ModificarF() {   
-            update(ref(db, 'Empleado/' + document.getElementById("ID").value),{
-                NombreDelEmpleado: {PrimerNombre: document.getElementById("Primer").value, SegundoNombre: document.getElementById("Segundo").value},
-                Departamento: document.getElementById("Departamento").value,
-                ID: Number(document.getElementById("ID").value)
-            });
-            alert("Empleado Modificado");
-        }
-
-        Adicionar.addEventListener("click", AdicionarF);
-        Leer.addEventListener("click", LeerF);
-        Borrar.addEventListener("click", BorrarF);
-        Modificar.addEventListener("click", ModificarF);
-
-        const dbRef = ref(db);
-        get(child(dbRef,'Sensorica/')).then((snapshot)=>{
-            document.getElementById("Sensor").innerHTML = snapshot.val().Distancia;
-        })
-        
-      </script>
+                var progressBar = document.getElementById("progressBar");
+                progressBar.style.width = (aux / 2000) * 100 + "%";
+            } else {
+            }
+        }).catch((error) => {
+        });
+    }, 10);
+    
+    
+  </script>
 </body>
 </html>
